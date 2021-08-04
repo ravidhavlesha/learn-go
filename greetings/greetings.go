@@ -34,7 +34,11 @@ func init() {
 }
 
 func randomString() string {
-	formats := []string{"Hi, %v. Welcome!", "Great to see you, %v!", "How are you, %v!"}
+	formats := []string{
+		"Hi, %v. Welcome!",
+		"Great to see you, %v!",
+		"How are you, %v!",
+	}
 
 	return formats[rand.Intn(len(formats))]
 }
