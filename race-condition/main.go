@@ -5,9 +5,19 @@ import (
 	"sync"
 )
 
-var x = 0
-var y = 0
-var z = 0
+var (
+	x       int
+	y       int
+	z       int
+	balance int
+)
+
+func init() {
+	x = 0
+	y = 0
+	z = 0
+	balance = 1000
+}
 
 func increment(wg *sync.WaitGroup) {
 	x++
@@ -47,9 +57,32 @@ func main() {
 		wg.Add(1)
 		go incrementWithChannel(&wg, ch)
 	}
-	wg.Wait()
 
 	fmt.Println("Final value of x", x)
 	fmt.Println("Final value of y", y)
 	fmt.Println("Final value of z", z)
+
+	wg.Add(1)
+	credit := 500
+	go func() {
+		m.Lock()
+		fmt.Printf("Depositing %d to account with balance: %d\n", credit, balance)
+		balance += credit
+		m.Unlock()
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	debit := 700
+	go func() {
+		m.Lock()
+		fmt.Printf("Withdrawing %d to account with balance: %d\n", debit, balance)
+		balance -= debit
+		m.Unlock()
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	fmt.Printf("Final balance in account: %d\n", balance)
 }
